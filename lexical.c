@@ -8,32 +8,23 @@
 
 FILE *f;
 char buffer[MAXSIZE];
-char nextChar;
+char nextChar=' ';
 int offssetBuffer ;
 
 
 typedef enum _tokens{ID_TOKEN,NUM_TOKEN,PROGRAM_TOKEN,CONST_TOKEN,VAR_TOKEN,IF_TOKEN,
-THEN_TOKEN,WHILE_TOKEN,DO_TOKEN,PV_TOKEN,PT_TOKEN,EG_TOKEN,PLUS_TOKEN,MOINS_TOKEN,
-MULT_TOKEN,DIV_TOKEN,VIR_TOKEN,AFF_TOKEN,INF_TOKEN,INFEG_TOKEN,SUP_TOKEN,SUPEG_TOKEN,DIFF_TOKEN,
-PO_TOKEN,PF_TOKEN,ERREUR_TOKEN,COMMENTAIRE,NEWLINE_TOKEN,FUNCTION_TOKEN,AND_TOKEN,OR_TOKEN,NOT_TOKEN
+REPEAT_TOKEN,WHILE_TOKEN,DO_TOKEN,PV_TOKEN,PT_TOKEN,EG_TOKEN,PLUS_TOKEN,MOINS_TOKEN,
+MULT_TOKEN,DIV_TOKEN,VIR_TOKEN,AFF_DIRECT_TOKEN,AFF_EGAL_TOKEN,AFF_INDIRECT_TOKEN,INF_TOKEN,INFEG_TOKEN,SUP_TOKEN,SUPEG_TOKEN,DIFF_TOKEN,
+PO_TOKEN,PF_TOKEN,ERREUR_TOKEN,COMMENTAIRE,NEWLINE_TOKEN,FUNCTION_TOKEN,AND_TOKEN,OR_TOKEN,NOT_TOKENWHILE_TOKEN,
+FOR_TOKEN,IN_TOKEN,NEXT_TOKEN,BREAK_TOKEN,NOT_TOKEN
 }tokens;
 
-typedef enum {
- ERR_CAR_INC, ERR_FICH_VID, ERR_ID_LONG,ERR_CONST_LONG,ERR_COMMENTAIRE
-}Erreurs;
 
-Erreurs ERR;
-
-typedef struct {
-		 Erreurs  CODE_ERR;
-		 char mes[40];
-	}TErreurs;
-
-TErreurs MES_ERR[5]={{ERR_CAR_INC,"caractère inconnu"}, {ERR_FICH_VID,"fichier vide"},{ERR_ID_LONG,"IDF très long" },
-{ERR_CONST_LONG,"constante très longue" },{ERR_COMMENTAIRE,"commentaire incorrect" }};
- 
 
 tokens token ;
+
+
+
 
 typedef enum _bool{
 	false,true
@@ -44,6 +35,8 @@ bool isNUmber();
 bool isSpecial();
 bool isChar();
 bool isEOF();
+
+
 bool isSeparator(){
 	switch (nextChar){
 		case ' ': return true;
@@ -74,13 +67,16 @@ void assignToken() {
 		token =VAR_TOKEN;
 	}
 	else if (isBufferNUmber()) 	token= NUM_TOKEN;
-	else if(!stricmp(buffer, "if" ))   token=IF_TOKEN;
-    else if(!stricmp(buffer, "then")) token=THEN_TOKEN;
-    else if(!stricmp(buffer, "while")) token=WHILE_TOKEN;
-    else if(!stricmp(buffer, "do")) token=DO_TOKEN;
-    else if(!stricmp(buffer, "function")) token=FUNCTION_TOKEN;
-    else if(strlen(buffer)>20) {ERR=ERR_ID_LONG;Erreur(ERR);
-	}else{
+	else if(!strcmp(buffer, "if" ))   token=IF_TOKEN;
+    else if(!strcmp(buffer, "repeat")) token=REPEAT_TOKEN;
+    else if(!strcmp(buffer, "while")) token=WHILE_TOKEN;
+    else if(!strcmp(buffer, "do")) token=DO_TOKEN;
+    else if(!strcmp(buffer, "for")) token=FOR_TOKEN;
+    else if(!strcmp(buffer, "in")) token=IN_TOKEN;
+    else if(!strcmp(buffer, "next")) token=NEXT_TOKEN;
+    else if(!strcmp(buffer, "break")) token=BREAK_TOKEN;
+    else if(!strcmp(buffer, "function")) token=FUNCTION_TOKEN;
+	else{
 		token=ID_TOKEN;
 	}
 
@@ -96,32 +92,21 @@ void clearBuffer(){
 	buffer[offssetBuffer]= '\0';
 }
 
-
-int main(int argc,char**argv){
-
-	f=fopen("code.R","r");
-	clearBuffer();
-	while(getNextToken()){
-		printf("   %s   \n",buffer);
-		assignToken();
-		clearBuffer();
-	}
-
-	printf("  fin   !!");
-
-	return 0;
-}
-
 void getNextChar(){
 	nextChar= getc(f);
 }
 
 bool getNextToken(){
+	
 	do {
-	if(isNUmber())
+	if(isNUmber()){
 		readNumber();
-	else if (isChar())
+		assignToken();
+	}
+	else if (isChar()){
 		readWord();
+		assignToken();
+	}
 	else if( isSpecial())
 		readSpecial();
 	else if (isSeparator())
@@ -143,7 +128,7 @@ bool isNUmber(){
 }
 
 bool isChar(){
-	if(nextChar>='a' && nextChar<='z'){
+	if((nextChar>='a' && nextChar<='z')| (nextChar>='A' && nextChar<='Z') ){
 		return true ;
 	}
 	else
@@ -155,48 +140,49 @@ bool isSpecial(){
 		case ';': token=PV_TOKEN;	return true;
         case '=': token=EG_TOKEN;	return true;
         case '.': token=PT_TOKEN;	return true;
-        case '+': token=PLUS_TOKEN;	return true;   
-        case '-': token=MOINS_TOKEN;	return true;        
+        case '+': token=PLUS_TOKEN; return true;  
+
+        case '-': token=MOINS_TOKEN ;	return true;
+           
+        
+
         case '*': token=MULT_TOKEN;	return true;
         case '/': token=DIV_TOKEN;	return true;
         case '#': token=COMMENTAIRE;	return true;
         case '&': token=AND_TOKEN;	return true;
         case '|': token=OR_TOKEN;	return true;
-        case '!': token=NOT_TOKEN;	return true;
+        case '!': addChartoBuffer(); getNextChar();
+        	if(nextChar=='='){
+        		token=DIFF_TOKEN;	return true;
+        	}else{
+        	 token=NOT_TOKEN;	return true;
+        	}
+                         
         case ':': getNextChar();
                       if(nextChar=='='){
-                            token=AFF_TOKEN;	return true;
-                      }else{
-                            ERR=ERR_CAR_INC;Erreur(ERR);	return true;}
-        case ':': getNextChar();
-                      if(nextChar=='='){	
-                            token=AFF_TOKEN;	return true;
-                      }else{
-                            ERR=ERR_CAR_INC;Erreur(ERR);	return true;}
-        case '<': getNextChar();
+                            token=AFF_EGAL_TOKEN;	return true;
+                      }	return false;
+
+        case '<': addChartoBuffer(); getNextChar();
                       if(nextChar=='='){
                             token=INFEG_TOKEN;	return true;
                       }else if(isChar()||isNUmber()||isSeparator()){
                             token=INF_TOKEN ;	return true;
-                      }else if(Car_Cour=='>'){
-                         token=DIFF_TOKEN;	return true;
-                      }else {ERR=ERR_CAR_INC;Erreur(ERR);	return true;}
-        case '>': getNextChar();
+                      }
+                      else if(nextChar=='-'){
+                      		token = AFF_INDIRECT_TOKEN ;return true;}
+                      return false;
+        case '>':addChartoBuffer(); getNextChar();
                       if(nextChar=='='){
                             token=SUPEG_TOKEN;	return true;
                       }else if(isChar()||isNUmber()||isSeparator()){
                             token=SUP_TOKEN;	return true;
-                      }else {ERR=ERR_CAR_INC;Erreur(ERR);	return true;}
+                      }	return false;
         case '(': token=PO_TOKEN;	return true;
         case ')': token=PF_TOKEN;	return true;
-	
-        default : ERR=ERR_CAR_INC;
-                      Erreur(ERR);
-
-
 	}
 	return false;
-		
+
 }
 
 bool isEOF(){
@@ -212,7 +198,7 @@ void readWord(){
 			addChartoBuffer();
 			getNextChar();
 
-	}while (isChar() || isNUmber())
+	}while (isChar() || isNUmber());
 }
 
 
@@ -221,7 +207,7 @@ void readNumber(){
 			addChartoBuffer();
 			getNextChar();
 
-	}while ( isNUmber())
+	}while ( isNUmber());
 }
 
 
@@ -231,7 +217,7 @@ void readSpecial(){
 			addChartoBuffer();
 			getNextChar();
 
-	}while ( isSpecial())
+	}while ( isSpecial());
 }
 
 void readError(){
@@ -242,6 +228,24 @@ void readError(){
 void readSeparator(){
 	do {
 			getNextChar();
-
-	}while(isSeparator())
+	}while(isSeparator());
 }
+
+int main(int argc,char**argv){
+
+	f=fopen("code.R","r");
+	clearBuffer();
+	getNextChar();
+	while(getNextToken()){
+		
+		printf(" %d",token);
+		printf("   %s   \n",buffer);
+		
+		clearBuffer();
+	}
+
+	printf("  fin   !!");
+
+	return 0;
+}
+
