@@ -3,6 +3,8 @@
 #include <string.h>
 #include <ctype.h>
 
+#include "global.h"
+
 #define MAXSIZE 10
 
 
@@ -12,29 +14,76 @@ char nextChar=' ';
 int offssetBuffer ;
 
 
+/*
 typedef enum _tokens{ID_TOKEN,NUM_TOKEN,PROGRAM_TOKEN,CONST_TOKEN,VAR_TOKEN,IF_TOKEN,
 REPEAT_TOKEN,WHILE_TOKEN,DO_TOKEN,PV_TOKEN,PT_TOKEN,EG_TOKEN,PLUS_TOKEN,MOINS_TOKEN,
 MULT_TOKEN,DIV_TOKEN,VIR_TOKEN,AFF_DIRECT_TOKEN,AFF_EGAL_TOKEN,AFF_INDIRECT_TOKEN,INF_TOKEN,INFEG_TOKEN,SUP_TOKEN,SUPEG_TOKEN,DIFF_TOKEN,
 PO_TOKEN,PF_TOKEN,ERREUR_TOKEN,COMMENTAIRE,NEWLINE_TOKEN,FUNCTION_TOKEN,AND_TOKEN,OR_TOKEN,NOT_TOKENWHILE_TOKEN,
 FOR_TOKEN,IN_TOKEN,NEXT_TOKEN,BREAK_TOKEN,NOT_TOKEN
 }tokens;
+*/
 
+typedef enum _tokens {
+  // Other tokens ??
+  NOTHING = -1
 
+  // keyword tokens
+  IF_TOKEN,
+  ELSE_TOKEN,
+  REPEAT_TOKEN,
+  WHILE_TOKEN,
+  FUNCTION_TOKEN,
+  FOR_TOKEN,
+  IN_TOKEN,
+  NEXT_TOKEN,
+  BREAK_TOKEN,
+  TRUE_TOKEN,
+  FALSE_TOKEN,
+  NULL_TOKEN,
+  INF_TOKEN,
+  NAN_TOKEN,
+  NA_INTEGER_TOKEN,
+  NA_REAL_TOKEN,
+  NA_COMPLEX_TOKEN,
+  NA_CHARACTER_TOKEN,
+
+  // Symbol tokens
+  PLUS_TOKEN,
+  SUBSTRACT_TOKEN,
+  MULTIPLY_TOKEN,
+  DEVIDE_TOKEN,
+  MODULO_TOKEN,
+  QUOTIENT_TOKEN,
+  POWER_TOKEN,
+  LESS_TOKEN,
+  GREATER_TOKEN,
+  EQUAL_TOKEN,
+  LESS_EQUAL_TOKEN,
+  GREATER_EQUAL_TOKEN,
+  NOT_EQUAL_TOKEN,
+  AND_TOKEN,
+  OR_TOKEN,
+  NOT_TOKEN,
+  LOGICAL_AND_TOKEN,
+  LOGICAL_OR_TOKEN,
+  LEFT_ASSIGN_TOKEN,
+  RIGHT_ASSIGN_TOKEN,
+
+  // Special tokens
+  ID_TOKEN,
+  STRING_TOKEN,
+  NUMERIC_TOKEN,
+  INTEGER_TOKEN,
+  COMPLEX_TOKEN,
+
+  // Separator token
+  SEPARATOR_TOKEN,
+  
+  EOF_TOKEN,
+  COMMENT_TOKEN
+}
 
 tokens token ;
-
-
-
-
-typedef enum _bool{
-	false,true
-}bool;
-bool getNextToken();
-void getNextChar();
-bool isNUmber();
-bool isSpecial();
-bool isChar();
-bool isEOF();
 
 
 bool isSeparator(){
@@ -54,12 +103,6 @@ bool isBufferNUmber(){
 		return true;
 	}return false;
 }
-
-void readNumber();
-void readWord();
-void readSpecial();
-void readError();
-void readSeparator();
 
 
 void assignToken() {
@@ -99,7 +142,7 @@ void getNextChar(){
 bool getNextToken(){
 	
 	do {
-	if(isNUmber()){
+	if(isNumber()){
 		readNumber();
 		assignToken();
 	}
@@ -119,7 +162,7 @@ bool getNextToken(){
 	return true;
 }
 
-bool isNUmber(){
+bool isNumber(){
 	if(nextChar>='0' && nextChar<='9'){
 		return true ;
 	}
@@ -166,7 +209,7 @@ bool isSpecial(){
         case '<': addChartoBuffer(); getNextChar();
                       if(nextChar=='='){
                             token=INFEG_TOKEN;	return true;
-                      }else if(isChar()||isNUmber()||isSeparator()){
+                      }else if(isChar()||isNumber()||isSeparator()){
                             token=INF_TOKEN ;	return true;
                       }
                       else if(nextChar=='-'){
@@ -175,7 +218,7 @@ bool isSpecial(){
         case '>':addChartoBuffer(); getNextChar();
                       if(nextChar=='='){
                             token=SUPEG_TOKEN;	return true;
-                      }else if(isChar()||isNUmber()||isSeparator()){
+                      }else if(isChar()||isNumber()||isSeparator()){
                             token=SUP_TOKEN;	return true;
                       }	return false;
         case '(': token=PO_TOKEN;	return true;
@@ -198,7 +241,7 @@ void readWord(){
 			addChartoBuffer();
 			getNextChar();
 
-	}while (isChar() || isNUmber());
+	}while (isChar() || isNumber());
 }
 
 
@@ -207,7 +250,7 @@ void readNumber(){
 			addChartoBuffer();
 			getNextChar();
 
-	}while ( isNUmber());
+	}while ( isNumber());
 }
 
 
