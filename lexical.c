@@ -4,8 +4,9 @@
 #include <ctype.h>
 
 #include "global.h"
+#include "lexical.h"
 
-#define MAXSIZE 10
+#define MAXSIZE 20
 
 
 FILE *f;
@@ -25,10 +26,10 @@ FOR_TOKEN,IN_TOKEN,NEXT_TOKEN,BREAK_TOKEN,NOT_TOKEN
 
 typedef enum _tokens {
   // Other tokens ??
-  NOTHING = -1
+  NOTHING = -1,
 
   // keyword tokens
-  IF_TOKEN,
+  IF_TOKEN = 0,
   ELSE_TOKEN,
   REPEAT_TOKEN,
   WHILE_TOKEN,
@@ -68,6 +69,8 @@ typedef enum _tokens {
   LOGICAL_OR_TOKEN,
   LEFT_ASSIGN_TOKEN,
   RIGHT_ASSIGN_TOKEN,
+  OPENING_PARENTHESES_TOKEN,
+  CLOSING_PARENTHESES_TOKEN,
 
   // Special tokens
   ID_TOKEN,
@@ -81,20 +84,20 @@ typedef enum _tokens {
   
   EOF_TOKEN,
   COMMENT_TOKEN
-}
+} tokens;
 
 tokens token ;
 
 
 bool isSeparator(){
-	switch (nextChar){
-		case ' ': return true;
-		case '\n':	return true;
-		case '\r' :	return true;
-		case ';' :	return true;
-		default :
-			return false;
-	}
+  switch (nextChar){
+    case ' ': return true;
+    case '\n':	return true;
+    case '\r' :	return true;
+    case ';' :	return true;
+    default :
+    return false;
+  }
 
 }
 
@@ -105,24 +108,18 @@ bool isBufferNUmber(){
 }
 
 
-void assignToken() {
-	if (strcmp(buffer,"var")==0){
-		token =VAR_TOKEN;
-	}
-	else if (isBufferNUmber()) 	token= NUM_TOKEN;
-	else if(!strcmp(buffer, "if" ))   token=IF_TOKEN;
-    else if(!strcmp(buffer, "repeat")) token=REPEAT_TOKEN;
-    else if(!strcmp(buffer, "while")) token=WHILE_TOKEN;
-    else if(!strcmp(buffer, "do")) token=DO_TOKEN;
-    else if(!strcmp(buffer, "for")) token=FOR_TOKEN;
-    else if(!strcmp(buffer, "in")) token=IN_TOKEN;
-    else if(!strcmp(buffer, "next")) token=NEXT_TOKEN;
-    else if(!strcmp(buffer, "break")) token=BREAK_TOKEN;
-    else if(!strcmp(buffer, "function")) token=FUNCTION_TOKEN;
-	else{
-		token=ID_TOKEN;
-	}
-
+void assignToken(tokens _token) {
+  if (_token == NOTHING) {
+    for (int i = 0; i < KEYWORDS_LIST_SIZE; i++) {
+      if (strcmp(buffer, keywords[i]) == 0) {
+        token = i;
+        return;
+      }
+    }
+    token = ID_TOKEN;
+    return;
+  }
+  token = _token;
 }
 
 void addChartoBuffer(){
@@ -135,34 +132,41 @@ void clearBuffer(){
 	buffer[offssetBuffer]= '\0';
 }
 
-void getNextChar(){
+void get_next_char(){
 	nextChar= getc(f);
 }
 
-bool getNextToken(){
+bool get_next_token(){
 	
 	do {
-	if(isNumber()){
-		readNumber();
-		assignToken();
-	}
-	else if (isChar()){
-		readWord();
-		assignToken();
-	}
-	else if( isSpecial())
-		readSpecial();
-	else if (isSeparator())
-		readSeparator();
-	else if(isEOF())
-		return false;
-	else
-		readError();
-		}while(offssetBuffer ==0);
+	  clearBuffer();
+	  if(is_number()) {
+      //printf("is reading number\n");
+	    read_number();
+    }
+	  else if (is_legal_char()) {
+      //printf("is reading legal character\n");
+	    read_word();
+    }
+	  else if( is_special()) {
+      //printf("is reading special\n");
+	    read_special();
+    }
+	  else if (isSeparator()) {
+      //printf("is reading separator\n");
+	    read_separator();
+    }
+	  else if(is_EOF()) {
+      //printf("is reading EOF\n");
+	    return false;
+    }
+	  else
+	    read_error();
+	} while(offssetBuffer ==0);
 	return true;
 }
 
-bool isNumber(){
+bool is_number(){
 	if(nextChar>='0' && nextChar<='9'){
 		return true ;
 	}
@@ -170,7 +174,7 @@ bool isNumber(){
 		return false;	
 }
 
-bool isChar(){
+bool is_char(){
 	if((nextChar>='a' && nextChar<='z')| (nextChar>='A' && nextChar<='Z') ){
 		return true ;
 	}
@@ -178,116 +182,116 @@ bool isChar(){
 		return false;	
 }
 
-bool isSpecial(){
+bool is_legal_char() {
+  if (nextChar == '_' || is_char())
+    return true;
+  else
+    return false;
+}
+
+bool is_special(){
 	switch(nextChar){
-		case ';': token=PV_TOKEN;	return true;
-        case '=': token=EG_TOKEN;	return true;
-        case '.': token=PT_TOKEN;	return true;
-        case '+': token=PLUS_TOKEN; return true;  
-
-        case '-': token=MOINS_TOKEN ;	return true;
-           
-        
-
-        case '*': token=MULT_TOKEN;	return true;
-        case '/': token=DIV_TOKEN;	return true;
-        case '#': token=COMMENTAIRE;	return true;
-        case '&': token=AND_TOKEN;	return true;
-        case '|': token=OR_TOKEN;	return true;
-        case '!': addChartoBuffer(); getNextChar();
-        	if(nextChar=='='){
-        		token=DIFF_TOKEN;	return true;
-        	}else{
-        	 token=NOT_TOKEN;	return true;
-        	}
-                         
-        case ':': getNextChar();
-                      if(nextChar=='='){
-                            token=AFF_EGAL_TOKEN;	return true;
-                      }	return false;
-
-        case '<': addChartoBuffer(); getNextChar();
-                      if(nextChar=='='){
-                            token=INFEG_TOKEN;	return true;
-                      }else if(isChar()||isNumber()||isSeparator()){
-                            token=INF_TOKEN ;	return true;
-                      }
-                      else if(nextChar=='-'){
-                      		token = AFF_INDIRECT_TOKEN ;return true;}
-                      return false;
-        case '>':addChartoBuffer(); getNextChar();
-                      if(nextChar=='='){
-                            token=SUPEG_TOKEN;	return true;
-                      }else if(isChar()||isNumber()||isSeparator()){
-                            token=SUP_TOKEN;	return true;
-                      }	return false;
-        case '(': token=PO_TOKEN;	return true;
-        case ')': token=PF_TOKEN;	return true;
+		case '+':
+      return true;
+    case '-':
+      return true;
+    case '*':
+      return true;
+    case '/':
+      return true;  
+    case '%':
+      return true;
+    case '^':
+      return true;
+    case '>':
+      return true;
+    case '<':
+      return true;
+    case '=':
+      return true;
+    case '!':
+      return true;
+    case '|':
+      return true;       
+    case '&':
+      return true;
+    case '(':
+      return true;
+    case ')':
+      return true;
 	}
 	return false;
 
 }
 
-bool isEOF(){
-	if(nextChar == EOF ){
-		return true ;
-	}
-	else
-		return false;	
+bool is_EOF(){
+  if(nextChar == EOF ){
+    return true ;
+  }
+  else
+    return false;	
 }
 
-void readWord(){
+void read_word(){
 	do {
 			addChartoBuffer();
-			getNextChar();
+			get_next_char();
 
-	}while (isChar() || isNumber());
+	}while (is_char() || is_number() || is_legal_char());
+  assignToken(NOTHING);
 }
 
 
-void readNumber(){
+void read_number(){
 	do {
 			addChartoBuffer();
-			getNextChar();
+			get_next_char();
 
-	}while ( isNumber());
+	}while ( is_number());
+  assignToken(NUMERIC_TOKEN);
 }
 
 
 
-void readSpecial(){
-	do {
-			addChartoBuffer();
-			getNextChar();
-
-	}while ( isSpecial());
+void read_special() {
+  do {
+    addChartoBuffer();
+    get_next_char();
+  } while (is_special());
+  assignToken(NOTHING);
 }
 
-void readError(){
-	printf (" \t error\n");
-	getNextChar();
+void read_error(){
+  printf (" \t error\n");
+  get_next_char();
 }
 
-void readSeparator(){
-	do {
-			getNextChar();
-	}while(isSeparator());
+void read_separator(){
+  do {
+    get_next_char();
+  } while(isSeparator());
+  assignToken(SEPARATOR_TOKEN);
+}
+
+void read_EOF() {
+  assignToken(EOF_TOKEN);
 }
 
 int main(int argc,char**argv){
 
 	f=fopen("code.R","r");
 	clearBuffer();
-	getNextChar();
-	while(getNextToken()){
+	get_next_char();
+	while(get_next_token()){
 		
+    printf(" buffer  %s\n", buffer);
 		printf(" %d",token);
 		printf("   %s   \n",buffer);
 		
-		clearBuffer();
+		//clearBuffer();
 	}
 
-	printf("  fin   !!");
+	printf("  fin   !!\n");
 
 	return 0;
 }
