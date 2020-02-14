@@ -94,13 +94,6 @@ bool is_separator(){
 }
 
 
-bool isBufferNUmber(){
-	if(buffer[0]>='0' && buffer[0]<='9'){
-		return true;
-	}return false;
-}
-
-
 void assignToken(tokens _token) {
   if (_token == NOTHING) {
     for (int i = 0; i < KEYWORDS_LIST_SIZE; i++) {
