@@ -80,21 +80,20 @@ static bool is_special();
 static bool is_char();
 static bool is_legal_char();
 static bool is_EOF();
-
-// not implemented yet
+static bool is_separator();
 static bool is_comment();
+static bool is_end_of_line();
 static bool is_double_quote();
 static bool is_single_quote();
+static bool is_legal_numeric();
 
 static void read_number();
 static void read_word();
 static void read_special();
 static void read_error();
 static void read_separator();
-
-// not implemented yet
 static void read_comment();
-static void read_new_line();
+static void read_string();
 static void read_EOF();
 
 #endif

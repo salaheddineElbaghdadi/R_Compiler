@@ -6,7 +6,7 @@
 #include "global.h"
 #include "lexical.h"
 
-#define MAXSIZE 20
+#define MAXSIZE 10000
 
 
 FILE *f;
@@ -15,21 +15,12 @@ char nextChar=' ';
 int offssetBuffer ;
 
 
-/*
-typedef enum _tokens{ID_TOKEN,NUM_TOKEN,PROGRAM_TOKEN,CONST_TOKEN,VAR_TOKEN,IF_TOKEN,
-REPEAT_TOKEN,WHILE_TOKEN,DO_TOKEN,PV_TOKEN,PT_TOKEN,EG_TOKEN,PLUS_TOKEN,MOINS_TOKEN,
-MULT_TOKEN,DIV_TOKEN,VIR_TOKEN,AFF_DIRECT_TOKEN,AFF_EGAL_TOKEN,AFF_INDIRECT_TOKEN,INF_TOKEN,INFEG_TOKEN,SUP_TOKEN,SUPEG_TOKEN,DIFF_TOKEN,
-PO_TOKEN,PF_TOKEN,ERREUR_TOKEN,COMMENTAIRE,NEWLINE_TOKEN,FUNCTION_TOKEN,AND_TOKEN,OR_TOKEN,NOT_TOKENWHILE_TOKEN,
-FOR_TOKEN,IN_TOKEN,NEXT_TOKEN,BREAK_TOKEN,NOT_TOKEN
-}tokens;
-*/
-
 typedef enum _tokens {
   // Other tokens ??
   NOTHING = -1,
 
   // keyword tokens
-  IF_TOKEN = 0,
+  IF_TOKEN,
   ELSE_TOKEN,
   REPEAT_TOKEN,
   WHILE_TOKEN,
@@ -43,6 +34,7 @@ typedef enum _tokens {
   NULL_TOKEN,
   INF_TOKEN,
   NAN_TOKEN,
+  NA_TOKEN,
   NA_INTEGER_TOKEN,
   NA_REAL_TOKEN,
   NA_COMPLEX_TOKEN,
@@ -89,7 +81,7 @@ typedef enum _tokens {
 tokens token ;
 
 
-bool isSeparator(){
+bool is_separator(){
   switch (nextChar){
     case ' ': return true;
     case '\n':	return true;
@@ -100,6 +92,7 @@ bool isSeparator(){
   }
 
 }
+
 
 bool isBufferNUmber(){
 	if(buffer[0]>='0' && buffer[0]<='9'){
@@ -148,11 +141,20 @@ bool get_next_token(){
       //printf("is reading legal character\n");
 	    read_word();
     }
+    else if (is_comment()) {
+      read_comment();
+    }
+    else if (is_single_quote()) {
+      read_string();
+    }
+    else if (is_double_quote()) {
+      read_string();
+    }
 	  else if( is_special()) {
       //printf("is reading special\n");
 	    read_special();
     }
-	  else if (isSeparator()) {
+	  else if (is_separator()) {
       //printf("is reading separator\n");
 	    read_separator();
     }
@@ -172,6 +174,13 @@ bool is_number(){
 	}
 	else
 		return false;	
+}
+
+bool is_legal_numeric() {
+  if (nextChar == '.' || nextChar == 'L')
+    return true;
+  else
+    return false;
 }
 
 bool is_char(){
@@ -224,6 +233,34 @@ bool is_special(){
 
 }
 
+bool is_double_quote() {
+  if (nextChar == '"')
+    return true;
+  else
+    return false;
+}
+
+bool is_single_quote() {
+  if (nextChar == '\'')
+    return true;
+  else
+    return false;
+}
+
+bool is_comment() {
+  if (nextChar == '#')
+    return true;
+  else
+    return false;
+}
+
+bool is_end_of_line() {
+  if (nextChar == '\n')
+    return true;
+  else
+    return false;
+}
+
 bool is_EOF(){
   if(nextChar == EOF ){
     return true ;
@@ -241,7 +278,7 @@ void read_word(){
   assignToken(NOTHING);
 }
 
-
+/*
 void read_number(){
 	do {
 			addChartoBuffer();
@@ -250,11 +287,60 @@ void read_number(){
 	}while ( is_number());
   assignToken(NUMERIC_TOKEN);
 }
+*/
 
+void read_number() {
+  do {
 
+    if (is_legal_numeric()) {
+      // Numeric / Real if we read '.'
+      if (nextChar == '.') {
+        do {
+          addChartoBuffer();
+          get_next_char();
+        } while (is_number());
+        assignToken(NUMERIC_TOKEN);
+        return;
+      }
+
+      if (nextChar == 'L') {
+        addChartoBuffer();
+        get_next_char();
+        assignToken(INTEGER_TOKEN);
+        return;
+      }
+
+      token = NUMERIC_TOKEN;
+    }
+
+    addChartoBuffer();
+    get_next_char();
+  } while (is_number() || is_legal_numeric());
+}
+
+void read_string() {
+  if (is_double_quote()) {
+    do {
+      addChartoBuffer();
+      get_next_char();
+    } while (!is_double_quote());
+    addChartoBuffer();
+    get_next_char();
+  }
+  else if (is_single_quote()) {
+    do {
+      addChartoBuffer();
+      get_next_char();
+    } while (!is_single_quote());
+    addChartoBuffer();
+    get_next_char();
+  }
+  assignToken(STRING_TOKEN);
+}
 
 void read_special() {
   do {
+    //printf("is spetical\n");
     addChartoBuffer();
     get_next_char();
   } while (is_special());
@@ -269,8 +355,15 @@ void read_error(){
 void read_separator(){
   do {
     get_next_char();
-  } while(isSeparator());
+  } while(is_separator());
   assignToken(SEPARATOR_TOKEN);
+}
+
+void read_comment() {
+  do {
+    get_next_char();
+  } while(!is_end_of_line());
+  assignToken(COMMENT_TOKEN);
 }
 
 void read_EOF() {
@@ -284,7 +377,6 @@ int main(int argc,char**argv){
 	get_next_char();
 	while(get_next_token()){
 		
-    printf(" buffer  %s\n", buffer);
 		printf(" %d",token);
 		printf("   %s   \n",buffer);
 		
