@@ -1,0 +1,46 @@
+terminaux: (à ajouter plus tard)
+
+non terminaux: (à ajouter plus tard)
+
+règles de production:
+
+
+PROG ::= BLOC 
+        | EOF
+
+BLOC ::= INSTRUCTION [BLOC]*
+
+INSTRUCTION::=  EXPRESSION
+             |  LOOP
+             |  FUNCTION
+             |  DECISION
+
+LOOP::=     for (id in VECTOR) {BLOC}
+       |    while (EXPRESSION) {BLOC}
+       |    repeat {BLOC}
+
+FUNCTION ::=    function (ARGUMENT){BLOC| Return exp}
+
+ARGUMENT ::=    NONE
+            |   (id,)* id
+
+DECISION::=     if(EXPRESSION){BLOC}
+            |   if(EXPRESSION){BLOC} else {BLOC}
+            |   if(EXPRESSION){BLOC} else DECISION
+
+OPERATION::=    (id |CALLFUNCTION|DATA) OPERATOR (id | CALLFUNCTION | DATA)
+
+EXPRESSION::=   id<-(id | CALLFUNCTION | DATA) [ OPERATOR (id | CALLFUNCTION | DATA) ]*
+            |   (id | CALLFUNCTION | DATA) [OPERATOR(id| CALLFUNCTION | DATA)]* -> id
+
+OPERATION ::=   (id | CALLFUNCTION | DATA) OPERATOR (id | CALLFUNCTION| DATA)
+
+OPERATOR ::=    == | < | > | + | - | * | /
+
+VECTOR ::=      c(id [,id]*)
+
+CALLFUNCTION ::=   id(None | DATA [,DATA]*) 
+
+
+
+                
