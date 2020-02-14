@@ -226,6 +226,16 @@ bool is_special(){
       return true;
     case ')':
       return true;
+    case '[':
+      return true;
+    case ']':
+      return true;
+    case '{':
+      return true;
+    case '}':
+      return true;
+    case ';':
+      return true;
 	}
 	return false;
 
@@ -385,4 +395,3 @@ int main(int argc,char**argv){
 
 	return 0;
 }
-
