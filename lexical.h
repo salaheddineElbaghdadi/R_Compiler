@@ -72,8 +72,7 @@ static char keywords[KEYWORDS_LIST_SIZE][20] = {
     */
 };
 
-static bool get_next_token();
-static void get_next_char();
+
 
 static bool is_number();
 static bool is_special();
@@ -87,6 +86,10 @@ static bool is_double_quote();
 static bool is_single_quote();
 static bool is_legal_numeric();
 
+bool get_next_token();
+void get_next_char();
+
+
 static void read_number();
 static void read_word();
 static void read_special();
@@ -94,6 +97,9 @@ static void read_error();
 static void read_separator();
 static void read_comment();
 static void read_string();
-static void read_EOF();
+void read_EOF();
+void init();
+void clearBuffer();
+
 
 #endif

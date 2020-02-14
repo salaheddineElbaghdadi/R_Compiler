@@ -1,7 +1,17 @@
 #ifndef GLOBAL
 #define GLOBAL
-
+#include<stdio.h>
 #define KEYWORDS_LIST_SIZE 46
+
+#define MAXSIZE 10000
+
+
+FILE *f;
+char buffer[MAXSIZE];
+char nextChar;
+int offssetBuffer ;
+
+
 
 typedef enum _bool {
   false, true
@@ -75,6 +85,6 @@ typedef enum _tokens {
   COMMENT_TOKEN
 } tokens;
 
-static tokens token ;
+tokens token ;
 
 #endif

@@ -6,13 +6,9 @@
 #include "global.h"
 #include "lexical.h"
 
-#define MAXSIZE 10000
-
-
-FILE *f;
-char buffer[MAXSIZE];
-char nextChar=' ';
-int offssetBuffer ;
+void init(){
+  nextChar=' ';
+}
 
 
 
@@ -309,7 +305,7 @@ void read_EOF() {
   assignToken(EOF_TOKEN);
 }
 
-int main(int argc,char**argv){
+/*int main(int argc,char**argv){
 
 	f=fopen("code.R","r");
 	clearBuffer();
@@ -326,3 +322,4 @@ int main(int argc,char**argv){
 
 	return 0;
 }
+*/
