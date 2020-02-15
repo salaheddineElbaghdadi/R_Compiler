@@ -5,12 +5,10 @@ non terminaux: (à ajouter plus tard)
 règles de production:
 
 
-PROG ::= BLOC 
-        | EOF
+PROG ::= (BLOC)* 
+        | END
 
-BLOC ::= INSTRUCTION [BLOC]*
-
-INSTRUCTION::=  EXPRESSION
+BLOC::=  EXPRESSION
              |  LOOP
              |  FUNCTION
              |  DECISION
@@ -28,12 +26,14 @@ DECISION::=     if(EXPRESSION){BLOC}
             |   if(EXPRESSION){BLOC} else {BLOC}
             |   if(EXPRESSION){BLOC} else DECISION
 
-OPERATION::=    (id |CALLFUNCTION|DATA) OPERATOR (id | CALLFUNCTION | DATA)
+IDENTIF ::=     id |CALLFUNCTION|DATA
 
-EXPRESSION::=   id<-(id | CALLFUNCTION | DATA) [ OPERATOR (id | CALLFUNCTION | DATA) ]*
-            |   (id | CALLFUNCTION | DATA) [OPERATOR(id| CALLFUNCTION | DATA)]* -> id
+OPERATION::=    IDENTIF [OPERATOR IDENTIF]*
 
-OPERATION ::=   (id | CALLFUNCTION | DATA) OPERATOR (id | CALLFUNCTION| DATA)
+
+EXPRESSION::=   id<-OPERATION
+            |   OPERATION -> id
+
 
 OPERATOR ::=    == | < | > | + | - | * | /
 
