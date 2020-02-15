@@ -21,7 +21,7 @@ bool DATA();
 
 int main(int argc,char**argv){
 	init();
-	f=fopen("code.R","r");
+	f=fopen(argv[1],"r");
 	clearBuffer();
 	get_next_char();
 	get_next_token();
