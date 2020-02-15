@@ -29,7 +29,6 @@ int main(int argc,char**argv){
 		printf("fin!!");
 	}
 	else{
-		printf("%d",token);
 		printf("syntax error!");
 	}
 	
@@ -39,7 +38,6 @@ int main(int argc,char**argv){
 }
 
 bool PROG(){
-	printf("----> PROG\n");
 	if(BLOC()){
 		while(BLOC());
 		if(END()){
@@ -59,7 +57,6 @@ bool PROG(){
 }
 
 bool BLOC(){
-	printf("---> BLOC\n");
 	if(EXPRESSION()){
 		get_next_token();
 		return true;
@@ -77,27 +74,18 @@ bool BLOC(){
 		get_next_token();
 		return true;
 	}
-	else if (OPERATION()){
-		get_next_token();
-		return true;
-	}
 	else{
 		return false;
 	}
 
 }
 bool END(){
-	printf("--->END\n");
 	if (token==EOF_TOKEN){
 		//printf("EOF");
 		return true;
 	}
-	else{
-		return false;
-	}
 }
 bool EXPRESSION(){
-	printf("---> EXPRESSION\n");
 	if(token==ID_TOKEN){
 		get_next_token();
 		if(token==LEFT_ASSIGN_TOKEN){
@@ -133,7 +121,6 @@ bool DECISION(){
 }
 
 bool IDENTIF(){
-	printf("---> IDENTIF\n");
 	if(token==ID_TOKEN || CALLFUNCTION() || DATA()){
 		get_next_token();
 		return true;
@@ -144,7 +131,6 @@ bool IDENTIF(){
 }
 
 bool OPERATION(){
-	printf("---> OPERATION\n");
 	if(IDENTIF()){
 		while(OPERATOR()){
 			if(!IDENTIF()){
@@ -164,16 +150,14 @@ bool OPERATION(){
 	if(token==OPENING_PARENTHESES_TOKEN){
 		get_next_token();
 		if(OPERATION()){
-				if(token=CLOSING_PARENTHESES_TOKEN){
-					get_next_char();
-					if(is_end_of_line()){
-						get_next_token();
-						return true;
-					}
-				
-	
-				}
-			
+			while(OPERATION);
+			if(token=CLOSING_PARENTHESES_TOKEN){
+				get_next_token();
+				return true;
+			}
+			else{
+				return false;
+			}
 		}
 		else{
 			return false;
@@ -183,7 +167,6 @@ bool OPERATION(){
 
 
 bool OPERATOR(){
-	printf("---> OPERATOR\n");
 	switch(token){
 		case EQUAL_TOKEN:{
 			get_next_token();
