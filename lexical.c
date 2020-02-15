@@ -85,7 +85,12 @@ bool get_next_token(){
     }
 	  else if(is_EOF()) {
       //printf("is reading EOF\n");
-	    return false;
+      if (token == EOF_TOKEN) {
+        return false;
+      }
+      read_EOF();
+	    //return false;
+      return true;
     }
 	  else
 	    read_error();
@@ -273,12 +278,57 @@ void read_string() {
   assignToken(STRING_TOKEN);
 }
 
+/*
 void read_special() {
   do {
     //printf("is spetical\n");
     addChartoBuffer();
     get_next_char();
   } while (is_special());
+  assignToken(NOTHING);
+}*/
+
+void read_special() {
+  char first_special = nextChar;
+  addChartoBuffer();
+  get_next_char();
+
+  if (is_special()) {
+    if (nextChar == '=') {
+      switch (first_special)
+      {
+      case '=':
+      case '<':
+      case '>':
+      case '!':
+        addChartoBuffer();
+        assignToken(NOTHING);
+        get_next_char();
+        break;
+      }
+    }
+    else if (nextChar == '&' && first_special == '&') {
+      addChartoBuffer();
+      assignToken(NOTHING);
+      get_next_char();
+    }
+    else if (nextChar == '|' && first_special == '|') {
+      addChartoBuffer();
+      assignToken(NOTHING);
+      get_next_char();
+    }
+    else if (nextChar == '<' && first_special == '-') {
+      addChartoBuffer();
+      assignToken(NOTHING);
+      get_next_char();
+    }
+    else if (nextChar == '-' && first_special == '>') {
+      addChartoBuffer();
+      assignToken(NOTHING);
+      get_next_char();
+    }
+  }
+
   assignToken(NOTHING);
 }
 
