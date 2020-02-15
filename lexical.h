@@ -51,7 +51,7 @@ static char keywords[KEYWORDS_LIST_SIZE][20] = {
 
     // Other symbols in the language
     "(",	  //40
-    ")"		  //41
+    ")",	  //41
     "[",      
     "]",
     "{",
@@ -81,7 +81,7 @@ static bool is_legal_char();
 static bool is_EOF();
 static bool is_separator();
 static bool is_comment();
-static bool is_end_of_line();
+bool is_end_of_line();
 static bool is_double_quote();
 static bool is_single_quote();
 static bool is_legal_numeric();
