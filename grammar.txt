@@ -4,38 +4,44 @@ non terminaux: (à ajouter plus tard)
 
 règles de production:
 
-
+ 
 PROG ::= (BLOC)* 
         | END
 
-BLOC::=  EXPRESSION
+BLOC     ::=  EXPRESSION
              |  LOOP
              |  FUNCTION
              |  DECISION
+             |  OPERATION
 
-LOOP::=     for (id in VECTOR) {BLOC}
-       |    while (EXPRESSION) {BLOC}
-       |    repeat {BLOC}
+LOOP::=     for (id in VECTOR) {BLOC} eol
+       |    while (EXPRESSION) {BLOC} eol
+       |    repeat {BLOC} eol
 
-FUNCTION ::=    function (ARGUMENT){BLOC| Return exp}
+FUNCTION ::=    function (ARGUMENT){BLOC| Return exp} eol
 
 ARGUMENT ::=    NONE
             |   (id,)* id
 
 DECISION::=     if(EXPRESSION){BLOC}
-            |   if(EXPRESSION){BLOC} else {BLOC}
-            |   if(EXPRESSION){BLOC} else DECISION
+            |   if(EXPRESSION){BLOC} else {BLOC} eol
+            |   if(EXPRESSION){BLOC} else DECISION eol
 
-IDENTIF ::=     id |CALLFUNCTION|DATA
+IDENTIF ::=     ID |CALLFUNCTION|DATA
 
-OPERATION::=    IDENTIF [OPERATOR IDENTIF]*
+ID ::=  num
+        |id
+
+OPERATION::=    IDENTIF [OPERATOR IDENTIF]* eol
+            |   '(' [OPERATION]* ')'
 
 
-EXPRESSION::=   id<-OPERATION
-            |   OPERATION -> id
+EXPRESSION::=   id<-OPERATION  
 
 
-OPERATOR ::=    == | < | > | + | - | * | /
+OPERATOR ::=    '==' | '<' | '>' | '+' | '-' | '*' | '/' 
+                | '<=' | '>=' | '!'| '&' | '|' | '!='| '||'
+                | '&&' | '%%' | '%/%' | '^' 
 
 VECTOR ::=      c(id [,id]*)
 
