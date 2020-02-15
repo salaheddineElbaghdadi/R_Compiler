@@ -45,6 +45,18 @@ void addChartoBuffer(){
 	buffer[offssetBuffer]= '\0'; 
 }
 
+char what_is_next() {
+  char original = nextChar;
+  //printf("original %c\n", original);
+  get_next_char();
+  char next = nextChar;
+  //printf("next %c\n", next);
+  fseek(f, -1, SEEK_CUR);
+  nextChar = original;
+  //printf("next char %c\n", nextChar);
+  return next;
+}
+
 void clearBuffer(){
 	offssetBuffer=0;
 	buffer[offssetBuffer]= '\0';
@@ -78,6 +90,7 @@ bool get_next_token(){
 	  else if( is_special()) {
       //printf("is reading special\n");
 	    read_special();
+      //printf(" ----- buffer %s\n", buffer);
     }
 	  else if (is_separator()) {
       //printf("is reading separator\n");
@@ -288,12 +301,17 @@ void read_special() {
   assignToken(NOTHING);
 }*/
 
+/*
 void read_special() {
-  char first_special = nextChar;
   addChartoBuffer();
+  char first_special = nextChar;
+  printf("== buffer %s == current char %c\n", buffer, first_special);
   get_next_char();
+  printf("reading special\n");
+  printf("buffer %s\n", buffer);
 
   if (is_special()) {
+    printf("second is special\n");
     if (nextChar == '=') {
       switch (first_special)
       {
@@ -317,12 +335,21 @@ void read_special() {
       assignToken(NOTHING);
       get_next_char();
     }
-    else if (nextChar == '<' && first_special == '-') {
+    else if (nextChar == '-' && first_special == '<') {
       addChartoBuffer();
       assignToken(NOTHING);
       get_next_char();
     }
-    else if (nextChar == '-' && first_special == '>') {
+    else if (nextChar == '>' && first_special == '-') {
+      addChartoBuffer();
+      assignToken(NOTHING);
+      get_next_char();
+    }
+    else {
+      printf("else\n");
+      previous();
+      get_next_char();
+      clearBuffer();
       addChartoBuffer();
       assignToken(NOTHING);
       get_next_char();
@@ -330,6 +357,64 @@ void read_special() {
   }
 
   assignToken(NOTHING);
+}
+*/
+
+void read_special() {
+  char next = what_is_next();
+
+  if (nextChar == '=' || next == '=') {
+    addChartoBuffer();
+    get_next_char();
+    addChartoBuffer();
+    get_next_char();
+    assignToken(NOTHING);
+  }
+  else if (nextChar == '<') {
+    switch (next)
+    {
+    case '-':
+    case '=':
+      addChartoBuffer();
+      get_next_char();
+      addChartoBuffer();
+      get_next_char();
+      assignToken(NOTHING);
+    }
+  }
+  else if (nextChar == '>' || next == '=') {
+    addChartoBuffer();
+    get_next_char();
+    addChartoBuffer();
+    get_next_char();
+    assignToken(NOTHING);
+  }
+  else if (nextChar == '-' || next == '>') {
+    addChartoBuffer();
+    get_next_char();
+    addChartoBuffer();
+    get_next_char();
+    assignToken(NOTHING);
+  }
+  else if (nextChar == '|' || next == '|') {
+    addChartoBuffer();
+    get_next_char();
+    addChartoBuffer();
+    get_next_char();
+    assignToken(NOTHING);
+  }
+  else if (nextChar == '&' || next == '&') {
+    addChartoBuffer();
+    get_next_char();
+    addChartoBuffer();
+    get_next_char();
+    assignToken(NOTHING);
+  }
+  else {
+    addChartoBuffer();
+    get_next_char();
+    assignToken(NOTHING);
+  }
 }
 
 void read_error(){
