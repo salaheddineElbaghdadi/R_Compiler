@@ -425,7 +425,6 @@ void read_special() {
   }
   else {
     addChartoBuffer();
-    printf("buffer %s\n", buffer);
     get_next_char();
     assignToken(NOTHING);
   }
