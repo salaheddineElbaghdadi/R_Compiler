@@ -5,32 +5,30 @@ non terminaux: (à ajouter plus tard)
 règles de production:
 
  
-PROG ::= (BLOC)* 
+PROG ::= [BLOC]*
         | END
 
-BLOC     ::=  EXPRESSION
-             |  LOOP
-             |  FUNCTION
-             |  DECISION
-             |  OPERATION
+BLOC     ::=    OPERATION [eol]*
+             |  EXPRESSION [eol]*
+             |  LOOP [eol]*
+             |  FUNCTION [eol]*
+             |  DECISION [eol]*
 
 LOOP::=     for (id in VECTOR) {BLOC} eol
        |    while (EXPRESSION) {BLOC} eol
        |    repeat {BLOC} eol
 
-FUNCTION ::=    function (ARGUMENT){BLOC| Return exp} eol
+FUNCTION ::=    function (ARGUMENT){BLOC| Return [id|num] } eol
 
 ARGUMENT ::=    NONE
             |   (id,)* id
 
-DECISION::=     if(EXPRESSION){BLOC}
-            |   if(EXPRESSION){BLOC} else {BLOC} eol
-            |   if(EXPRESSION){BLOC} else DECISION eol
+DECISION::=     if(OPERATION) (eol)* {BLOC}
+            |   if(OPERATION){BLOC} else {BLOC} eol
+            |   if(OPERATION){BLOC} else DECISION eol
 
-IDENTIF ::=     ID |CALLFUNCTION|DATA
+IDENTIF ::=     num | id |CALLFUNCTION
 
-ID ::=  num
-        |id
 
 OPERATION::=    IDENTIF [OPERATOR IDENTIF]* eol
             |   '(' [OPERATION]* ')'
@@ -45,7 +43,7 @@ OPERATOR ::=    '==' | '<' | '>' | '+' | '-' | '*' | '/'
 
 VECTOR ::=      c(id [,id]*)
 
-CALLFUNCTION ::=   id(None | DATA [,DATA]*) 
+CALLFUNCTION ::=   id(None | ARGUMENT [,ARGUMENT]*) 
 
 
 
