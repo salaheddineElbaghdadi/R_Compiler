@@ -17,7 +17,6 @@ bool OPERATION();
 bool IDENTIF();
 bool OPERATOR();
 bool CALLFUNCTION();    // not implemented
-bool DATA();            // not implemented
 
 
 #endif
