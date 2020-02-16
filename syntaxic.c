@@ -12,7 +12,7 @@ bool OPERATION();
 bool IDENTIF();
 bool CALLFUNCTION();
 bool OPERATOR();
-
+bool EXPRESSION();
 void main(int argc,char**argv){
 	f=fopen("code.R","r");
 	clearBuffer();
@@ -49,8 +49,18 @@ bool PROG(){
 }
 
 bool BLOC(){
-	
-	if(OPERATION()){
+	if(DECISION()){
+		get_next_token();
+		if(token==EOL_TOKEN){
+			get_next_token();
+			while(token==EOL_TOKEN){
+				get_next_token();
+			}
+			printf("--->BLOC\n");
+			return true;
+		}
+	}
+	else if(OPERATION()){
 		get_next_token();
 		if(token==EOL_TOKEN){
 			get_next_token();
@@ -85,18 +95,20 @@ bool CALLFUNCTION(){
 }
 
 bool IDENTIF(){
-	
 	if(token==NUMERIC_TOKEN){
+		printf("hehe\n");
 		get_next_token();
 		printf("--->IDENTIF\n");
 		return true;
 	}
 	else if(token==ID_TOKEN){
+		
 		get_next_token();
 		printf("--->IDENTIF\n");
 		return true;
 	}
 	else if(CALLFUNCTION()){
+		printf("hehe\n");
 		get_next_token();
 		printf("--->IDENTIF\n");
 		return true;
@@ -142,8 +154,14 @@ bool OPERATION(){
 		while(OPERATOR()){
 			if(IDENTIF()){
 				get_next_token();
-				printf("--->OPERATION\n");
-				return true;
+				if(token==EOL_TOKEN){
+					get_next_token();
+					while(token==EOL_TOKEN){get_next_token();};
+					get_next_token();
+					printf("--->OPERATION\n");
+					return true;
+				}
+	
 			}
 			else{
 				return false;
@@ -153,17 +171,27 @@ bool OPERATION(){
 		printf("--->OPERATION\n");
 		return true;
 	}
-	else{
-		return false;
-	}
-	if(token==OPENING_PARENTHESES_TOKEN){
+	/*
+	else if(token==OPENING_PARENTHESES_TOKEN){
+		printf("read (\n");
 		get_next_token();
+		printf("token: %d\n",token);
 		if(OPERATION()){
+			printf("token: %d\n",token);
 			while(OPERATION());
+			printf("token: %d\n",token);
 			if(token==CLOSING_PARENTHESES_TOKEN){
+				printf("read )\n");
 				get_next_token();
-				printf("--->OPERATION\n");
-				return true;
+				if(token==EOL_TOKEN){
+					get_next_token();
+					while(token==EOL_TOKEN){get_next_token();};
+					printf("--->OPERATION\n");
+					return true;
+
+				}
+				
+				
 			}
 			else{
 				return false;
@@ -174,7 +202,7 @@ bool OPERATION(){
 		}
 		
 
-	}
+	}*/
 	else{
 		return false;
 	}
@@ -184,15 +212,18 @@ bool OPERATION(){
 
 
 bool DECISION(){
-	
 	if(token==IF_TOKEN){
+
 		get_next_token();
 		if(token==OPENING_PARENTHESES_TOKEN){
+
 			get_next_token();
 			if(OPERATION()){
 				if(token==CLOSING_PARENTHESES_TOKEN){
+
 					get_next_token();
 					if(token==EOL_TOKEN){
+
 						get_next_token();
 						if(token==OPENING_CURLY_BRACKETS_TOKEN){
 							get_next_token();
@@ -222,6 +253,7 @@ bool DECISION(){
 							get_next_token();
 							if(BLOC()){
 								if(token==CLOSING_CURLY_BRACKETS_TOKEN){
+
 									get_next_token();
 									while(token==EOL_TOKEN){
 										get_next_token();
@@ -257,4 +289,27 @@ bool DECISION(){
 	else{
 		return false;
 	}
+}
+bool EXPRESSION(){
+	if(token==ID_TOKEN){
+		get_next_token();
+		if(token==LEFT_ASSIGN_TOKEN){
+			get_next_token();
+			if(OPERATION()){
+				get_next_token();
+				return true;
+				
+			}
+			else{
+				return false;
+			}
+		}
+		else{
+			return false;
+		}
+	
+	}
+	else{
+		return false;
+		}
 }
