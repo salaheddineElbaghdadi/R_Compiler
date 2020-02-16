@@ -81,9 +81,10 @@ typedef enum _tokens {
 
   // Separator token
   SEPARATOR_TOKEN,//52
+  EOL_TOKEN,//53
   
-  EOF_TOKEN,//53
-  COMMENT_TOKEN //54
+  EOF_TOKEN,//54
+  COMMENT_TOKEN //55
 } tokens;
 
 tokens token ;
