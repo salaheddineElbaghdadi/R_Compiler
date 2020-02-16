@@ -1,18 +1,5 @@
-#include<stdio.h>
-#include<stdlib.h>
-#include"lexical.h"
-#include"global.h"
-#include"lexical.h"
+#include"syntaxic.h"
 
-bool PROG();
-bool END();
-bool BLOC();
-bool DECISION();
-bool OPERATION();
-bool IDENTIF();
-bool CALLFUNCTION();
-bool OPERATOR();
-bool EXPRESSION();
 void main(int argc,char**argv){
 	f=fopen("code.R","r");
 	clearBuffer();

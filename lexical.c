@@ -395,28 +395,28 @@ void read_special() {
       assignToken(NOTHING);
     }
   }
-  else if (nextChar == '>' || next == '=') {
+  else if (nextChar == '>' && next == '=') {
     addChartoBuffer();
     get_next_char();
     addChartoBuffer();
     get_next_char();
     assignToken(NOTHING);
   }
-  else if (nextChar == '-' || next == '>') {
+  else if (nextChar == '-' && next == '>') {
     addChartoBuffer();
     get_next_char();
     addChartoBuffer();
     get_next_char();
     assignToken(NOTHING);
   }
-  else if (nextChar == '|' || next == '|') {
+  else if (nextChar == '|' && next == '|') {
     addChartoBuffer();
     get_next_char();
     addChartoBuffer();
     get_next_char();
     assignToken(NOTHING);
   }
-  else if (nextChar == '&' || next == '&') {
+  else if (nextChar == '&' && next == '&') {
     addChartoBuffer();
     get_next_char();
     addChartoBuffer();
