@@ -395,28 +395,28 @@ void read_special() {
       assignToken(NOTHING);
     }
   }
-  else if (nextChar == '>' || next == '=') {
+  else if (nextChar == '>' && next == '=') {
     addChartoBuffer();
     get_next_char();
     addChartoBuffer();
     get_next_char();
     assignToken(NOTHING);
   }
-  else if (nextChar == '-' || next == '>') {
+  else if (nextChar == '-' && next == '>') {
     addChartoBuffer();
     get_next_char();
     addChartoBuffer();
     get_next_char();
     assignToken(NOTHING);
   }
-  else if (nextChar == '|' || next == '|') {
+  else if (nextChar == '|' && next == '|') {
     addChartoBuffer();
     get_next_char();
     addChartoBuffer();
     get_next_char();
     assignToken(NOTHING);
   }
-  else if (nextChar == '&' || next == '&') {
+  else if (nextChar == '&' && next == '&') {
     addChartoBuffer();
     get_next_char();
     addChartoBuffer();
@@ -425,6 +425,7 @@ void read_special() {
   }
   else {
     addChartoBuffer();
+    printf("buffer %s\n", buffer);
     get_next_char();
     assignToken(NOTHING);
   }
