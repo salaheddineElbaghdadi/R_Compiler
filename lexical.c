@@ -16,7 +16,7 @@ void init(){
 bool is_separator(){
   switch (nextChar){
     case ' ': return true;
-    case '\n':	return true;
+    //case '\n':	return true;
     case '\r' :	return true;
     case ';' :	return true;
     default :
@@ -86,6 +86,9 @@ bool get_next_token(){
     }
     else if (is_double_quote()) {
       read_string();
+    }
+    else if (is_end_of_line()) {
+      read_end_of_line();
     }
 	  else if( is_special()) {
       //printf("is reading special\n");
@@ -291,6 +294,14 @@ void read_string() {
     get_next_char();
   }
   assignToken(STRING_TOKEN);
+}
+
+void read_end_of_line() {
+  do {
+    addChartoBuffer();
+    get_next_char();
+  } while(is_end_of_line());
+  assignToken(EOL_TOKEN);
 }
 
 /*
