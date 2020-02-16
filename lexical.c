@@ -233,7 +233,7 @@ void read_word(){
   assignToken(NOTHING);
 }
 
-/*
+
 void read_number(){
 	do {
 			addChartoBuffer();
@@ -242,8 +242,8 @@ void read_number(){
 	}while ( is_number());
   assignToken(NUMERIC_TOKEN);
 }
-*/
 
+/*
 void read_number() {
   do {
 
@@ -255,7 +255,7 @@ void read_number() {
           get_next_char();
         } while (is_number());
         assignToken(NUMERIC_TOKEN);
-        return;
+        return ;
       }
 
       if (nextChar == 'L') {
@@ -271,7 +271,7 @@ void read_number() {
     addChartoBuffer();
     get_next_char();
   } while (is_number() || is_legal_numeric());
-}
+}*/
 
 void read_string() {
   if (is_double_quote()) {
