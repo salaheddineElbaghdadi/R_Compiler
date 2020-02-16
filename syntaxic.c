@@ -28,10 +28,11 @@ void main(int argc,char**argv){
 }
 
 bool PROG(){
-	printf("-->PROG\n");
+	
 	if(BLOC()){
 		while(BLOC());
 		if(END()){
+			printf("-->PROG\n");
 			return true;
 		}
 		else{
@@ -39,6 +40,7 @@ bool PROG(){
 		}
 	}
 	else if(END()){
+		printf("-->PROG\n");
 		return true;
 	}
 	else{
@@ -47,7 +49,7 @@ bool PROG(){
 }
 
 bool BLOC(){
-
+	
 	if(OPERATION()){
 		get_next_token();
 		if(token==EOL_TOKEN){
@@ -55,6 +57,7 @@ bool BLOC(){
 			while(token==EOL_TOKEN){
 				get_next_token();
 			}
+			printf("--->BLOC\n");
 			return true;
 		}
 	}
@@ -64,8 +67,11 @@ bool BLOC(){
 }
 
 bool END(){
+	
 	if(token==EOF_TOKEN){
+		printf("--->END\n");
 		printf("fin du fichier\n");
+		
 		return true;
 	}
 	else{
@@ -74,19 +80,25 @@ bool END(){
 }
 bool CALLFUNCTION(){
 	return false;
+	printf("--->CALLFUNCTION\n");
+	
 }
 
 bool IDENTIF(){
+	
 	if(token==NUMERIC_TOKEN){
 		get_next_token();
+		printf("--->IDENTIF\n");
 		return true;
 	}
 	else if(token==ID_TOKEN){
 		get_next_token();
+		printf("--->IDENTIF\n");
 		return true;
 	}
-	else if(token==CALLFUNCTION()){
+	else if(CALLFUNCTION()){
 		get_next_token();
+		printf("--->IDENTIF\n");
 		return true;
 	}
 	else{
@@ -95,25 +107,26 @@ bool IDENTIF(){
 }
 
 bool OPERATOR(){
+	
 	switch(token){
-		case EQUAL_TOKEN:{get_next_token();return true;}
-		case LESS_TOKEN:{get_next_token();return true;}
-		case LESS_EQUAL_TOKEN:{get_next_token();return true;}
-		case GREATER_TOKEN:{get_next_token();return true;}
-		case GREATER_EQUAL_TOKEN:{get_next_token();return true;}
-		case PLUS_TOKEN:{get_next_token();return true;}
-		case SUBSTRACT_TOKEN:{get_next_token();return true;}
-		case MULTIPLY_TOKEN:{get_next_token();return true;}
-		case DEVIDE_TOKEN:{get_next_token();return true;}
-		case NOT_TOKEN:{get_next_token();return true;}
-		case AND_TOKEN:{get_next_token();return true;}
-		case LOGICAL_AND_TOKEN:{get_next_token();return true;}
-		case OR_TOKEN:{get_next_token();return true;}
-		case LOGICAL_OR_TOKEN:{get_next_token();return true;}
-		case NOT_EQUAL_TOKEN:{get_next_token();return true;}
-		case MODULO_TOKEN:{get_next_token();return true;}
-		case POWER_TOKEN:{get_next_token();return true;}
-		case QUOTIENT_TOKEN:{get_next_token();return true;}
+		case EQUAL_TOKEN:{get_next_token();printf("--->OPERATOR\n");return true;}
+		case LESS_TOKEN:{get_next_token();printf("--->OPERATOR\n");return true;}
+		case LESS_EQUAL_TOKEN:{get_next_token();printf("--->OPERATOR\n");return true;}
+		case GREATER_TOKEN:{get_next_token();printf("--->OPERATOR\n");return true;}
+		case GREATER_EQUAL_TOKEN:{get_next_token();printf("--->OPERATOR\n");return true;}
+		case PLUS_TOKEN:{get_next_token();printf("--->OPERATOR\n");return true;}
+		case SUBSTRACT_TOKEN:{get_next_token();printf("--->OPERATOR\n");return true;}
+		case MULTIPLY_TOKEN:{get_next_token();printf("--->OPERATOR\n");return true;}
+		case DEVIDE_TOKEN:{get_next_token();printf("--->OPERATOR\n");return true;}
+		case NOT_TOKEN:{get_next_token();printf("--->OPERATOR\n");return true;}
+		case AND_TOKEN:{get_next_token();printf("--->OPERATOR\n");return true;}
+		case LOGICAL_AND_TOKEN:{get_next_token();printf("--->OPERATOR\n");return true;}
+		case OR_TOKEN:{get_next_token();printf("--->OPERATOR\n");return true;}
+		case LOGICAL_OR_TOKEN:{get_next_token();printf("--->OPERATOR\n");return true;}
+		case NOT_EQUAL_TOKEN:{get_next_token();printf("--->OPERATOR\n");return true;}
+		case MODULO_TOKEN:{get_next_token();printf("--->OPERATOR\n");return true;}
+		case POWER_TOKEN:{get_next_token();printf("--->OPERATOR\n");return true;}
+		case QUOTIENT_TOKEN:{get_next_token();printf("--->OPERATOR\n");return true;}
 		default:{
 			return false;
 		}
@@ -123,11 +136,16 @@ bool OPERATOR(){
 }
 
 bool OPERATION(){
+	
 	if(IDENTIF()){
 		get_next_token();
+		printf("%d\n",token);
 		while(OPERATOR()){
+			printf("%d\n",token);
 			if(IDENTIF()){
+				printf("%d\n",token);
 				get_next_token();
+				printf("--->OPERATION\n");
 				return true;
 			}
 			else{
@@ -135,6 +153,7 @@ bool OPERATION(){
 			}
 		}
 		get_next_token();
+		printf("--->OPERATION\n");
 		return true;
 	}
 	else{
@@ -146,6 +165,7 @@ bool OPERATION(){
 
 
 bool DECISION(){
+	
 	if(token==IF_TOKEN){
 		get_next_token();
 		if(token==OPENING_PARENTHESES_TOKEN){
@@ -160,7 +180,9 @@ bool DECISION(){
 							if(BLOC()){
 								if(token==CLOSING_CURLY_BRACKETS_TOKEN){
 									get_next_token();
-									printf("function syn correcte\n");
+									//printf("function syn correcte\n");
+									printf("--->DECISION\n");
+									return true;
 								}
 								else{
 									return false;
@@ -179,7 +201,9 @@ bool DECISION(){
 							if(BLOC()){
 								if(token==CLOSING_CURLY_BRACKETS_TOKEN){
 									get_next_token();
-									printf("function syn correcte\n");
+									printf("--->DECISION\n");
+									//printf("function syn correcte\n");
+									return true;
 								}
 								else{
 									return false;
