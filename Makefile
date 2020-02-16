@@ -1,6 +1,6 @@
 
 default:
-	gcc lexical.c syntaxic.c lexical.h -o compiler
+	gcc lexical.c lexical.h syntaxic.c -o compiler
 
 clearn:
 	rm compiler

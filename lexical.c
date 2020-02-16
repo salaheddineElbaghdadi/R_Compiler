@@ -441,7 +441,7 @@ void read_comment() {
 void read_EOF() {
   assignToken(EOF_TOKEN);
 }
-
+/*
 int main(int argc,char**argv){
 
 	f=fopen("code.R","r");
@@ -459,3 +459,4 @@ int main(int argc,char**argv){
 
 	return 0;
 }
+*/
