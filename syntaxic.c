@@ -139,11 +139,8 @@ bool OPERATION(){
 	
 	if(IDENTIF()){
 		get_next_token();
-		printf("%d\n",token);
 		while(OPERATOR()){
-			printf("%d\n",token);
 			if(IDENTIF()){
-				printf("%d\n",token);
 				get_next_token();
 				printf("--->OPERATION\n");
 				return true;
@@ -155,6 +152,28 @@ bool OPERATION(){
 		get_next_token();
 		printf("--->OPERATION\n");
 		return true;
+	}
+	else{
+		return false;
+	}
+	if(token==OPENING_PARENTHESES_TOKEN){
+		get_next_token();
+		if(OPERATION()){
+			while(OPERATION());
+			if(token==CLOSING_PARENTHESES_TOKEN){
+				get_next_token();
+				printf("--->OPERATION\n");
+				return true;
+			}
+			else{
+				return false;
+			}
+		}
+		else{
+			return false;
+		}
+		
+
 	}
 	else{
 		return false;
@@ -180,6 +199,9 @@ bool DECISION(){
 							if(BLOC()){
 								if(token==CLOSING_CURLY_BRACKETS_TOKEN){
 									get_next_token();
+									while(token==EOL_TOKEN){
+										get_next_token();
+									}
 									//printf("function syn correcte\n");
 									printf("--->DECISION\n");
 									return true;
@@ -201,6 +223,9 @@ bool DECISION(){
 							if(BLOC()){
 								if(token==CLOSING_CURLY_BRACKETS_TOKEN){
 									get_next_token();
+									while(token==EOL_TOKEN){
+										get_next_token();
+									}
 									printf("--->DECISION\n");
 									//printf("function syn correcte\n");
 									return true;
