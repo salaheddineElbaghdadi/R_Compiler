@@ -56,7 +56,8 @@ static char keywords[KEYWORDS_LIST_SIZE][20] = {
     "]",
     "{",
     "}",      //45
-    ";"       //46
+    ";",
+    ","      //46
     /*
     "~",
     "?",

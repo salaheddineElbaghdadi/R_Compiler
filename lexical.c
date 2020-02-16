@@ -181,6 +181,8 @@ bool is_special(){
       return true;
     case ';':
       return true;
+    case ',':
+      return true;
 	}
 	return false;
 
@@ -440,7 +442,7 @@ void read_EOF() {
   assignToken(EOF_TOKEN);
 }
 
-/*int main(int argc,char**argv){
+int main(int argc,char**argv){
 
 	f=fopen("code.R","r");
 	clearBuffer();
@@ -457,4 +459,3 @@ void read_EOF() {
 
 	return 0;
 }
-*/
