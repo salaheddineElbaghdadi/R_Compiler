@@ -83,7 +83,6 @@ bool CALLFUNCTION(){
 
 bool IDENTIF(){
 	if(token==NUMERIC_TOKEN){
-		printf("hehe\n");
 		get_next_token();
 		printf("--->IDENTIF\n");
 		return true;
@@ -95,7 +94,6 @@ bool IDENTIF(){
 		return true;
 	}
 	else if(CALLFUNCTION()){
-		printf("hehe\n");
 		get_next_token();
 		printf("--->IDENTIF\n");
 		return true;
@@ -284,6 +282,12 @@ bool EXPRESSION(){
 			get_next_token();
 			if(OPERATION()){
 				get_next_token();
+				if(token==EOL_TOKEN){
+					get_next_token();
+					while(token==EOL_TOKEN){
+						get_next_token();
+					}
+				}
 				return true;
 				
 			}
